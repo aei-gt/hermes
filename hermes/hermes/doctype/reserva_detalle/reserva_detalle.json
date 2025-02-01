@@ -1,0 +1,55 @@
+{
+ "actions": [],
+ "autoname": "autoincrement",
+ "creation": "2025-02-01 08:15:21.128450",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "reserva_principal",
+  "fecha_de_reserva",
+  "habitacion"
+ ],
+ "fields": [
+  {
+   "fieldname": "reserva_principal",
+   "fieldtype": "Data",
+   "label": "Reserva Principal"
+  },
+  {
+   "fieldname": "fecha_de_reserva",
+   "fieldtype": "Date",
+   "label": "Fecha de Reserva"
+  },
+  {
+   "fieldname": "habitacion",
+   "fieldtype": "Link",
+   "label": "Habitacion",
+   "options": "habitacion"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-02-01 08:20:48.186410",
+ "modified_by": "Administrator",
+ "module": "Hermes",
+ "name": "reserva_detalle",
+ "naming_rule": "Autoincrement",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

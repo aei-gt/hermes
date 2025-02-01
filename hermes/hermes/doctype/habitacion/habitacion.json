@@ -1,0 +1,71 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:habitacion",
+ "creation": "2025-01-31 21:29:46.354867",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "habitacion",
+  "distribuci\u00f3n",
+  "column_break_foie",
+  "costo",
+  "habilitado"
+ ],
+ "fields": [
+  {
+   "fieldname": "habitacion",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Habitaci\u00f3n",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "costo",
+   "fieldtype": "Currency",
+   "label": "Costo Base",
+   "precision": "2"
+  },
+  {
+   "fieldname": "distribuci\u00f3n",
+   "fieldtype": "Data",
+   "label": "Distribuci\u00f3n"
+  },
+  {
+   "default": "0",
+   "fieldname": "habilitado",
+   "fieldtype": "Check",
+   "label": "Habilitado"
+  },
+  {
+   "fieldname": "column_break_foie",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-02-01 07:58:38.781074",
+ "modified_by": "Administrator",
+ "module": "Hermes",
+ "name": "habitacion",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
