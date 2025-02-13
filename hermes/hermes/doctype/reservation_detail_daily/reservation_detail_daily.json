@@ -1,38 +1,39 @@
 {
  "actions": [],
  "autoname": "autoincrement",
- "creation": "2025-02-01 08:15:21.128450",
+ "creation": "2025-02-01 23:51:44.111234",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "reserva_principal",
-  "fecha_de_reserva",
+  "reserva_dia_id",
+  "reserva_fecha",
   "habitacion"
  ],
  "fields": [
   {
-   "fieldname": "reserva_principal",
-   "fieldtype": "Data",
-   "label": "Reserva Principal"
+   "fieldname": "reserva_dia_id",
+   "fieldtype": "Link",
+   "label": "Reservation ID",
+   "options": "reservation_detail"
   },
   {
-   "fieldname": "fecha_de_reserva",
+   "fieldname": "reserva_fecha",
    "fieldtype": "Date",
-   "label": "Fecha de Reserva"
+   "label": "Reservation Date"
   },
   {
    "fieldname": "habitacion",
    "fieldtype": "Link",
-   "label": "Habitacion",
-   "options": "habitacion"
+   "label": "Room",
+   "options": "room"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-01 08:20:48.186410",
+ "modified": "2025-02-12 21:18:23.404892",
  "modified_by": "Administrator",
  "module": "Hermes",
- "name": "reserva_detalle",
+ "name": "reservation_detail_daily",
  "naming_rule": "Autoincrement",
  "owner": "Administrator",
  "permissions": [

@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class reserva_detalle_detalle(Document):
+class reservationtion(Document):
 	pass

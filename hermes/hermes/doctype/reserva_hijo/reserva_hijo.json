@@ -1,0 +1,39 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "hash",
+ "creation": "2025-02-01 23:13:18.173324",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "habitacion",
+  "nota"
+ ],
+ "fields": [
+  {
+   "fieldname": "habitacion",
+   "fieldtype": "Link",
+   "label": "Habitacion",
+   "options": "habitacion"
+  },
+  {
+   "fieldname": "nota",
+   "fieldtype": "Data",
+   "label": "Nota"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-02-01 23:22:01.970678",
+ "modified_by": "Administrator",
+ "module": "Hermes",
+ "name": "reserva_hijo",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class Testreserva_detalle_detalle(FrappeTestCase):
+class Testreserva_hijo(FrappeTestCase):
 	pass

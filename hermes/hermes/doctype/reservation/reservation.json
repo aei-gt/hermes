@@ -1,0 +1,161 @@
+{
+ "actions": [],
+ "autoname": "format:R{YY}-{#}",
+ "creation": "2025-02-01 18:32:01.524711",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "datos_generales_section",
+  "fecha_entrada",
+  "fecha_salida",
+  "cliente",
+  "telefono",
+  "column_break_gzqz",
+  "estado_reserva",
+  "notas",
+  "tipo_contacto",
+  "section_break_wjiv",
+  "reserva_detalle",
+  "section_break_vyng",
+  "total_global",
+  "column_break_lpwr",
+  "total_abonado",
+  "column_break_jwyj",
+  "total_pendiente"
+ ],
+ "fields": [
+  {
+   "fieldname": "fecha_entrada",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Entry Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "fecha_salida",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Departure Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_gzqz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cliente",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Customer",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "default": "TENTATIVO",
+   "fieldname": "estado_reserva",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Reservation Status",
+   "options": "TENTATIVO\nRESERVA SIN PAGO\nRESERVA PAGADA\nNO SHOW",
+   "reqd": 1
+  },
+  {
+   "fieldname": "notas",
+   "fieldtype": "Small Text",
+   "label": "Note"
+  },
+  {
+   "fieldname": "section_break_vyng",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_global",
+   "fieldtype": "Currency",
+   "label": "Total Cost",
+   "non_negative": 1,
+   "precision": "2",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_lpwr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_abonado",
+   "fieldtype": "Currency",
+   "label": "Amount Paid",
+   "non_negative": 1,
+   "precision": "2",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_jwyj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_pendiente",
+   "fieldtype": "Currency",
+   "label": "Outstanding Balance",
+   "non_negative": 1,
+   "precision": "2",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "default": "DIRECTO",
+   "fieldname": "tipo_contacto",
+   "fieldtype": "Select",
+   "label": "Type of Approach",
+   "options": "DIRECTO\nREDES\nAGENCIA"
+  },
+  {
+   "fieldname": "telefono",
+   "fieldtype": "Read Only",
+   "label": "Phone",
+   "read_only": 1
+  },
+  {
+   "fieldname": "datos_generales_section",
+   "fieldtype": "Section Break",
+   "label": "Datos Generales"
+  },
+  {
+   "fieldname": "section_break_wjiv",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "reserva_detalle",
+   "fieldtype": "Table",
+   "label": "Reservation Detail",
+   "options": "reservation_detail"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-02-12 21:15:17.583095",
+ "modified_by": "Administrator",
+ "module": "Hermes",
+ "name": "reservation",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

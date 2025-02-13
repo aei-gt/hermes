@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class habitacion(Document):
+class reserva_hijo(Document):
 	pass

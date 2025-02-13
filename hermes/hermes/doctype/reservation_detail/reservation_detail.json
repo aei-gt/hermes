@@ -1,0 +1,55 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "hash",
+ "creation": "2025-02-01 23:13:18.173324",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "habitacion",
+  "nota",
+  "precio_base",
+  "total_estadia"
+ ],
+ "fields": [
+  {
+   "fieldname": "habitacion",
+   "fieldtype": "Link",
+   "label": "Room",
+   "options": "room"
+  },
+  {
+   "fieldname": "nota",
+   "fieldtype": "Data",
+   "label": "Note"
+  },
+  {
+   "fieldname": "precio_base",
+   "fieldtype": "Currency",
+   "label": "Price x Day",
+   "non_negative": 1,
+   "precision": "2"
+  },
+  {
+   "fieldname": "total_estadia",
+   "fieldtype": "Currency",
+   "label": "Total Per Stay",
+   "non_negative": 1,
+   "precision": "2"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-02-12 21:32:38.798291",
+ "modified_by": "Administrator",
+ "module": "Hermes",
+ "name": "reservation_detail",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

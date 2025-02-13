@@ -17,26 +17,26 @@
    "fieldname": "habitacion",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Habitaci\u00f3n",
+   "label": "Room",
    "reqd": 1,
    "unique": 1
   },
   {
    "fieldname": "costo",
    "fieldtype": "Currency",
-   "label": "Costo Base",
+   "label": "Base Price",
    "precision": "2"
   },
   {
    "fieldname": "distribuci\u00f3n",
    "fieldtype": "Data",
-   "label": "Distribuci\u00f3n"
+   "label": "Distribution"
   },
   {
    "default": "0",
    "fieldname": "habilitado",
    "fieldtype": "Check",
-   "label": "Habilitado"
+   "label": "Active"
   },
   {
    "fieldname": "column_break_foie",
@@ -45,10 +45,10 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-01 07:58:38.781074",
+ "modified": "2025-02-12 21:24:10.637366",
  "modified_by": "Administrator",
  "module": "Hermes",
- "name": "habitacion",
+ "name": "room",
  "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
