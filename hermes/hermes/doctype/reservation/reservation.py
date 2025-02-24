@@ -3,17 +3,27 @@
 
 import frappe
 from frappe.model.document import Document
-
+from frappe.utils import add_days
 
 class reservation(Document):
-	def validate(self):
-		for row in self.reserva_detalle:
-			current_date = self.fecha_entrada
-			while current_date < self.fecha_salida:
-				frappe.get_doc({
-					"doctype": "reservation_detail_daily",
-					"reserva_dia_id": self.name,
-					"habitacion": row.habitacion,
-					"reserva_fecha": current_date
-				}).insert(ignore_permissions=True)
-				current_date = frappe.utils.add_days(current_date, 1)
+    pass
+@frappe.whitelist()
+def create_reservation_details(reservation_id):
+    reservation = frappe.get_doc("reservation", reservation_id)
+    
+    if not reservation:
+        frappe.throw("Reservation not found")
+
+    for row in reservation.reserva_detalle:
+        current_date = reservation.fecha_entrada
+        while current_date < reservation.fecha_salida:
+            doc = frappe.get_doc({
+                "doctype": "reservation_detail_daily",
+                "reserva_dia_id": reservation.name,
+                "habitacion": row.habitacion,
+                "reserva_fecha": current_date
+            })
+            doc.insert(ignore_permissions=True)
+            current_date = add_days(current_date, 1)
+
+    return {"message": "Reservation details added successfully"}

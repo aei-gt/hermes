@@ -29,6 +29,22 @@ frappe.ui.form.on('reservation', {
     total_abonado: function(frm) {
         frm.set_value('total_pendiente', frm.doc.total_global - frm.doc.total_abonado);
     },
+    refresh: function(frm) {
+        if(!frm.is_new()) {
+        frm.add_custom_button(__('Generate Details'), function() {
+            frappe.call({
+                method: "hermes.hermes.doctype.reservation.reservation.create_reservation_details",
+                args: { reservation_id: frm.doc.name },
+                callback: function(response) {
+                    if (!response.exc) {
+                        frappe.msgprint(__('Reservation details added successfully'));
+                        frm.reload_doc();
+                    }
+                }
+            });
+        });
+    }
+    }
 });
 
 frappe.ui.form.on('reservation_detail', {
