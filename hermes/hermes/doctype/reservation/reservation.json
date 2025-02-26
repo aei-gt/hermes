@@ -21,7 +21,8 @@
   "column_break_lpwr",
   "total_abonado",
   "column_break_jwyj",
-  "total_pendiente"
+  "total_pendiente",
+  "amended_from"
  ],
  "fields": [
   {
@@ -51,6 +52,7 @@
    "reqd": 1
   },
   {
+   "allow_on_submit": 1,
    "default": "TENTATIVO",
    "fieldname": "estado_reserva",
    "fieldtype": "Select",
@@ -60,6 +62,7 @@
    "reqd": 1
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "notas",
    "fieldtype": "Small Text",
    "label": "Note"
@@ -82,6 +85,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "allow_on_submit": 1,
    "default": "0",
    "fieldname": "total_abonado",
    "fieldtype": "Currency",
@@ -95,6 +99,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "allow_on_submit": 1,
    "default": "0",
    "fieldname": "total_pendiente",
    "fieldtype": "Currency",
@@ -131,11 +136,22 @@
    "fieldtype": "Table",
    "label": "Reservation Detail",
    "options": "reservation_detail"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "reservation",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [],
- "modified": "2025-02-24 18:15:24.699275",
+ "modified": "2025-02-26 17:34:36.849093",
  "modified_by": "Administrator",
  "module": "Hermes",
  "name": "reservation",

@@ -24,26 +24,14 @@ frappe.ui.form.on('reservation', {
             let nights = frappe.datetime.get_day_diff(frm.doc.fecha_salida, frm.doc.fecha_entrada);
             frm.set_df_property('total_global', 'label', `Total Nights: ${nights}`);
             frm.fields_dict.total_global.$wrapper.css('color', 'red');
+            set_available_rooms_query(frm);
         }
     },
     total_abonado: function(frm) {
         frm.set_value('total_pendiente', frm.doc.total_global - frm.doc.total_abonado);
     },
     refresh: function(frm) {
-        if(!frm.is_new()) {
-        frm.add_custom_button(__('Generate Details'), function() {
-            frappe.call({
-                method: "hermes.hermes.doctype.reservation.reservation.create_reservation_details",
-                args: { reservation_id: frm.doc.name },
-                callback: function(response) {
-                    if (!response.exc) {
-                        frappe.msgprint(__('Reservation details added successfully'));
-                        frm.reload_doc();
-                    }
-                }
-            });
-        });
-    }
+        set_available_rooms_query(frm);
     }
 });
 
@@ -91,4 +79,24 @@ function update_totals(frm) {
     });
     frm.set_value('total_global', total_cost);
     frm.set_value('total_pendiente', total_cost - frm.doc.total_abonado);
+}
+
+
+function set_available_rooms_query(frm) {
+    let from_date = frm.doc.fecha_entrada;
+    let to_date = frm.doc.fecha_salida;
+
+    if (!from_date || !to_date) {
+        return;
+    }
+
+    frm.fields_dict.reserva_detalle.grid.get_field("habitacion").get_query = function() {
+        return {
+            query: "hermes.hermes.doctype.reservation.reservation.get_available_rooms",
+            filters: {
+                from_date: from_date,
+                to_date: to_date
+            }
+        };
+    };
 }
