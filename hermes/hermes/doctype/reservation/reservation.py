@@ -17,7 +17,7 @@ class reservation(Document):
                     "reserva_fecha": current_date,
                     "reservation_status":self.estado_reserva
                 })
-                doc.insert(ignore_permissions=True)
+                doc.insert()
                 current_date = add_days(current_date, 1)
 
     def on_cancel(self):
