@@ -32,6 +32,20 @@ frappe.ui.form.on('reservation', {
     },
     refresh: function(frm) {
         set_available_rooms_query(frm);
+    },
+    after_save:function(frm){
+            if(!frm.is_new()) {
+                frappe.call({
+                    method: "hermes.hermes.doctype.reservation.reservation.create_reservation_details",
+                    args: { reservation_id: frm.doc.name },
+                    callback: function(response) {
+                        if (!response.exc) {
+                            frappe.msgprint(__('Reservation details added successfully'));
+                            frm.reload_doc();
+                        }
+                    }
+                });
+        }
     }
 });
 
