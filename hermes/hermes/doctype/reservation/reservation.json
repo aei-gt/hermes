@@ -85,7 +85,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "allow_on_submit": 1,
    "default": "0",
    "fieldname": "total_abonado",
    "fieldtype": "Currency",
@@ -99,7 +98,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "allow_on_submit": 1,
    "default": "0",
    "fieldname": "total_pendiente",
    "fieldtype": "Currency",
@@ -151,7 +149,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-02-26 17:34:36.849093",
+ "modified": "2025-03-03 00:43:21.493875",
  "modified_by": "Administrator",
  "module": "Hermes",
  "name": "reservation",

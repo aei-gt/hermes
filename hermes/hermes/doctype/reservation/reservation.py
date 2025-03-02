@@ -8,9 +8,18 @@ from frappe.utils import add_days
 class reservation(Document):
     def on_cancel(self):
         delete_related_reservation_details(self.name)
-
+    def on_update(self):
+        records = frappe.get_all("reservation_detail_daily", filters={"reserva_dia_id": self.name})
+        for record in records:
+            frappe.db.set_value("reservation_detail_daily", record,"reservation_status" , self.estado_reserva)
+        frappe.db.commit()
+    def before_submit(self):
+        allowed_statuses = ["RESERVA SIN PAGO", "RESERVA PAGADA"]
+        
+        if self.estado_reserva not in allowed_statuses:
+            frappe.throw("You can only submit the document if 'estado_reserva' is 'RESERVA SIN PAGO' or 'RESERVA PAGADA'.")
+        
 def delete_related_reservation_details(reservation_id):
-    """Delete all linked reservation_detail_daily records before deleting the reservation."""
     frappe.db.delete("reservation_detail_daily", {"reserva_dia_id": reservation_id})
     frappe.db.commit()
         
@@ -45,6 +54,10 @@ def create_reservation_details(reservation_id):
     if not reservation:
         frappe.throw("Reservation not found")
 
+    # Pehle purane records delete karein jo iss reservation_id ke hain
+    delete_related_reservation_details(reservation.name)
+
+    # Naye records insert karain
     for row in reservation.reserva_detalle:
         current_date = reservation.fecha_entrada
         while current_date < reservation.fecha_salida:
@@ -52,9 +65,8 @@ def create_reservation_details(reservation_id):
                 "doctype": "reservation_detail_daily",
                 "reserva_dia_id": reservation.name,
                 "habitacion": row.habitacion,
-                "reserva_fecha": current_date
+                "reserva_fecha": current_date,
+                "reservation_status": reservation.estado_reserva
             })
             doc.insert(ignore_permissions=True)
             current_date = add_days(current_date, 1)
-
-    return {"message": "Reservation details added successfully"}

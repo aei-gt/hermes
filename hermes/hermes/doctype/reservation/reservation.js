@@ -5,10 +5,9 @@ frappe.ui.form.on('reservation', {
     fecha_entrada: function(frm) {
         if (frm.doc.fecha_entrada) {
             let next_day = frappe.datetime.add_days(frm.doc.fecha_entrada, 1);
-            if (!frm.doc.fecha_salida) {
-                frm.set_value('fecha_salida', next_day);
-            }
+            frm.set_value('fecha_salida', next_day);
         }
+        estado_reserva(frm);
     },
     fecha_salida: function(frm) {
         if (frm.doc.fecha_entrada && frm.doc.fecha_salida) {
@@ -24,14 +23,14 @@ frappe.ui.form.on('reservation', {
             let nights = frappe.datetime.get_day_diff(frm.doc.fecha_salida, frm.doc.fecha_entrada);
             frm.set_df_property('total_global', 'label', `Total Nights: ${nights}`);
             frm.fields_dict.total_global.$wrapper.css('color', 'red');
-            set_available_rooms_query(frm);
+            estado_reserva(frm);
         }
     },
     total_abonado: function(frm) {
         frm.set_value('total_pendiente', frm.doc.total_global - frm.doc.total_abonado);
     },
     refresh: function(frm) {
-        set_available_rooms_query(frm);
+        estado_reserva(frm);
     },
     after_save:function(frm){
             if(!frm.is_new()) {
@@ -40,7 +39,7 @@ frappe.ui.form.on('reservation', {
                     args: { reservation_id: frm.doc.name },
                     callback: function(response) {
                         if (!response.exc) {
-                            frappe.msgprint(__('Reservation details added successfully'));
+                            // frappe.msgprint(__('Reservation Details Updated successfully'));
                             frm.reload_doc();
                         }
                     }
@@ -96,20 +95,13 @@ function update_totals(frm) {
 }
 
 
-function set_available_rooms_query(frm) {
-    let from_date = frm.doc.fecha_entrada;
-    let to_date = frm.doc.fecha_salida;
-
-    if (!from_date || !to_date) {
-        return;
-    }
-
+function estado_reserva(frm) {    
     frm.fields_dict.reserva_detalle.grid.get_field("habitacion").get_query = function() {
         return {
             query: "hermes.hermes.doctype.reservation.reservation.get_available_rooms",
             filters: {
-                from_date: from_date,
-                to_date: to_date
+                from_date: frm.doc.fecha_entrada,
+                to_date: frm.doc.fecha_salida
             }
         };
     };
