@@ -36,13 +36,14 @@
   {
    "fieldname": "reservation_status",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Reservation Status",
    "options": "\nTENTATIVO\nRESERVA SIN PAGO\nRESERVA PAGADA\nNO SHOW"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-26 17:51:40.703393",
+ "modified": "2025-03-03 20:00:44.077763",
  "modified_by": "Administrator",
  "module": "Hermes",
  "name": "reservation_detail_daily",

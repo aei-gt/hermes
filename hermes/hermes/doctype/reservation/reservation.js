@@ -71,7 +71,22 @@ frappe.ui.form.on('reservation_detail', {
     precio_base: function(frm, cdt, cdn) {
         calculate_total(frm, cdt, cdn);
     },
-    reserva_detalle_remove: function(frm) {
+    before_reserva_detalle_remove: function (frm, cdt, cdn) {
+        let row = locals[cdt][cdn];
+        if (row && row.habitacion) {
+            frappe.call({
+                method: "hermes.hermes.doctype.reservation.reservation.delete_reservation_daily",
+                args: {
+                    reserva_dia_id: frm.doc.name,
+                    habitacion: row.habitacion
+                },
+                callback: function (response) {
+                    console.log(response.message);  // Debugging output
+                }
+            });
+        }
+        
+    },reserva_detalle_remove:function(frm){
         update_totals(frm);
     }
 });
@@ -93,6 +108,22 @@ function update_totals(frm) {
     frm.set_value('total_global', total_cost);
     frm.set_value('total_pendiente', total_cost - frm.doc.total_abonado);
 }
+// function delete_Res_daily(frm) {
+//     frm.doc.reserva_detalle.forEach(row => {
+//         frm.call({
+//             method: "hermes.hermes.doctype.reservation.reservation.delete_reservation_daily",
+//             args: {
+//                 reserva_dia_id: frm.doc.name,
+//                 habitacion: row.habitacion
+//             },
+//             callback: function(response) {
+//                 if (response.message) {
+//                     console.log("Deleted reservation details for:", row.habitacion);
+//                 }
+//             }
+//         });
+//     });
+// }
 
 
 function estado_reserva(frm) {    

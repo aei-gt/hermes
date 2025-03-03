@@ -8,17 +8,28 @@ from frappe.utils import add_days
 class reservation(Document):
     def on_cancel(self):
         delete_related_reservation_details(self.name)
+    
     def on_update(self):
         records = frappe.get_all("reservation_detail_daily", filters={"reserva_dia_id": self.name})
         for record in records:
             frappe.db.set_value("reservation_detail_daily", record,"reservation_status" , self.estado_reserva)
         frappe.db.commit()
+
+
+
     def before_submit(self):
         allowed_statuses = ["RESERVA SIN PAGO", "RESERVA PAGADA"]
         
         if self.estado_reserva not in allowed_statuses:
             frappe.throw("You can only submit the document if 'estado_reserva' is 'RESERVA SIN PAGO' or 'RESERVA PAGADA'.")
-        
+
+
+    
+
+
+
+
+
 def delete_related_reservation_details(reservation_id):
     frappe.db.delete("reservation_detail_daily", {"reserva_dia_id": reservation_id})
     frappe.db.commit()
@@ -36,6 +47,7 @@ def get_available_rooms(doctype, txt, searchfield, start, page_len, filters):
         SELECT DISTINCT habitacion 
         FROM `tabreservation_detail_daily` 
         WHERE reserva_fecha BETWEEN %s AND %s
+        AND reservation_status IN ('RESERVA SIN PAGO', 'RESERVA PAGADA')
     """, (from_date, to_date), as_list=True)
 
     booked_room_list = [row[0] for row in booked_rooms] if booked_rooms else [""]
@@ -70,3 +82,16 @@ def create_reservation_details(reservation_id):
             })
             doc.insert(ignore_permissions=True)
             current_date = add_days(current_date, 1)
+
+@frappe.whitelist()
+def delete_reservation_daily(reserva_dia_id, habitacion):
+    if not reserva_dia_id or not habitacion:
+        return "Missing parameters"
+
+    reservations = frappe.get_all("reservation_detail_daily", filters={"reserva_dia_id": reserva_dia_id, "habitacion": habitacion}, fields=["name"])
+    if reservations:
+        for res in reservations:
+            frappe.delete_doc("reservation_detail_daily", res.name, force=True)
+        return f"Deleted {len(reservations)} records for habitacion: {habitacion}"
+    
+    return "No records found"
