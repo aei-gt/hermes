@@ -17,8 +17,6 @@ frappe.ui.form.on('reservation', {
             if (departure_date < entry_date) {
                 frappe.msgprint(__('Departure date cannot be before entry date'));
                 frm.set_value('fecha_salida', frappe.datetime.add_days(frm.doc.fecha_entrada, 1));
-            } else if (departure_date.getTime() === entry_date.getTime()) {
-                frappe.msgprint(__('Please confirm departure date'));
             }
             let nights = frappe.datetime.get_day_diff(frm.doc.fecha_salida, frm.doc.fecha_entrada);
             frm.set_df_property('total_global', 'label', `Total Nights: ${nights}`);
