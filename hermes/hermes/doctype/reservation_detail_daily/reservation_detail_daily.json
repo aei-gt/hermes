@@ -42,8 +42,9 @@
   }
  ],
  "index_web_pages_for_search": 1,
+ "is_calendar_and_gantt": 1,
  "links": [],
- "modified": "2025-03-03 20:00:44.077763",
+ "modified": "2025-03-04 21:24:46.003328",
  "modified_by": "Administrator",
  "module": "Hermes",
  "name": "reservation_detail_daily",

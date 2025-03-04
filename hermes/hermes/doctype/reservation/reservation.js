@@ -45,7 +45,11 @@ frappe.ui.form.on('reservation', {
                     }
                 });
         }
-    }
+        update_totals
+    },show_room_not_payedtentative: function(frm) {
+        console.log("Checkbox clicked.");
+        estado_reserva(frm);
+    },
 });
 
 frappe.ui.form.on('reservation_detail', {
@@ -127,13 +131,28 @@ function update_totals(frm) {
 
 
 function estado_reserva(frm) {    
-    frm.fields_dict.reserva_detalle.grid.get_field("habitacion").get_query = function() {
-        return {
-            query: "hermes.hermes.doctype.reservation.reservation.get_available_rooms",
-            filters: {
-                from_date: frm.doc.fecha_entrada,
-                to_date: frm.doc.fecha_salida
-            }
+    if (!frm.doc.show_room_not_payedtentative) {
+        console.log("Showing only fully free rooms.");
+        frm.fields_dict.reserva_detalle.grid.get_field("habitacion").get_query = function() {
+            return {
+                query: "hermes.hermes.doctype.reservation.reservation.get_available_rooms_without_status",
+                filters: {
+                    from_date: frm.doc.fecha_entrada,
+                    to_date: frm.doc.fecha_salida
+                }
+            };
         };
-    };
+    } else {
+        console.log("Showing free rooms + rooms with 'TENTATIVO' & 'RESERVA SIN PAGO'.");
+
+        frm.fields_dict.reserva_detalle.grid.get_field("habitacion").get_query = function() {
+            return {
+                query: "hermes.hermes.doctype.reservation.reservation.get_available_rooms",
+                filters: {
+                    from_date: frm.doc.fecha_entrada,
+                    to_date: frm.doc.fecha_salida
+                }
+            };
+        };
+    }
 }

@@ -33,7 +33,10 @@ class reservation(Document):
 def delete_related_reservation_details(reservation_id):
     frappe.db.delete("reservation_detail_daily", {"reserva_dia_id": reservation_id})
     frappe.db.commit()
-        
+
+
+
+
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
 def get_available_rooms(doctype, txt, searchfield, start, page_len, filters):
@@ -43,20 +46,60 @@ def get_available_rooms(doctype, txt, searchfield, start, page_len, filters):
     if not from_date or not to_date:
         return []
 
+    # Fetch booked rooms with status "RESERVA PAGADA" (confirmed reservations)
     booked_rooms = frappe.db.sql("""
         SELECT DISTINCT habitacion 
         FROM `tabreservation_detail_daily` 
         WHERE reserva_fecha BETWEEN %s AND %s
-        AND reservation_status IN ('RESERVA SIN PAGO', 'RESERVA PAGADA')
+        AND reservation_status = 'RESERVA PAGADA'
     """, (from_date, to_date), as_list=True)
 
     booked_room_list = [row[0] for row in booked_rooms] if booked_rooms else [""]
 
     return frappe.db.sql("""
         SELECT name FROM `tabroom` 
-        WHERE name NOT IN (%s)
+        WHERE name NOT IN ({})
+        OR name IN (
+            SELECT DISTINCT habitacion 
+            FROM `tabreservation_detail_daily` 
+            WHERE reserva_fecha BETWEEN %s AND %s
+            AND reservation_status IN ('RESERVA SIN PAGO', 'TENTATIVO')
+        )
         ORDER BY name ASC
-    """ % ", ".join(["%s"] * len(booked_room_list)), tuple(booked_room_list), as_list=True)
+    """.format(", ".join(["%s"] * len(booked_room_list))), tuple(booked_room_list + [from_date, to_date]), as_list=True)
+
+
+
+
+
+
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def get_available_rooms_without_status(doctype, txt, searchfield, start, page_len, filters):
+    from_date = filters.get("from_date")
+    to_date = filters.get("to_date")
+
+    if not from_date or not to_date:
+        return []
+
+    # Fetch booked rooms with status "RESERVA PAGADA"
+    booked_rooms = frappe.db.sql("""
+        SELECT DISTINCT habitacion 
+        FROM `tabreservation_detail_daily` 
+        WHERE reserva_fecha BETWEEN %s AND %s
+    """, (from_date, to_date), as_list=True)
+
+    booked_room_list = [row[0] for row in booked_rooms] if booked_rooms else [""]
+
+    return frappe.db.sql("""
+        SELECT name FROM `tabroom` 
+        WHERE name NOT IN ({})
+        ORDER BY name ASC
+    """.format(", ".join(["%s"] * len(booked_room_list))), tuple(booked_room_list), as_list=True)
+
+
+
+
 
 
 @frappe.whitelist()

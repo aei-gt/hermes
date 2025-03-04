@@ -10,6 +10,7 @@
   "fecha_salida",
   "cliente",
   "telefono",
+  "show_room_not_payedtentative",
   "column_break_gzqz",
   "estado_reserva",
   "notas",
@@ -78,6 +79,7 @@
    "label": "Total Cost",
    "non_negative": 1,
    "precision": "2",
+   "read_only": 1,
    "reqd": 1
   },
   {
@@ -144,12 +146,18 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "show_room_not_payedtentative",
+   "fieldtype": "Check",
+   "label": "Show Room Not Payed/Tentative"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-03-03 00:43:21.493875",
+ "modified": "2025-03-04 21:14:06.421090",
  "modified_by": "Administrator",
  "module": "Hermes",
  "name": "reservation",
