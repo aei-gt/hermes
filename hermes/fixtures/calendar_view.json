@@ -1,0 +1,13 @@
+[
+ {
+  "all_day": 1,
+  "docstatus": 0,
+  "doctype": "Calendar View",
+  "end_date_field": "reserva_fecha",
+  "modified": "2025-03-04 22:07:50.484444",
+  "name": "Room",
+  "reference_doctype": "reservation_detail_daily",
+  "start_date_field": "reserva_fecha",
+  "subject_field": "habitacion"
+ }
+]
