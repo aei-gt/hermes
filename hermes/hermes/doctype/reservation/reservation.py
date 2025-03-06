@@ -46,27 +46,13 @@ def get_available_rooms(doctype, txt, searchfield, start, page_len, filters):
     if not from_date or not to_date:
         return []
 
-    # Fetch booked rooms with status "RESERVA PAGADA" (confirmed reservations)
-    booked_rooms = frappe.db.sql("""
+    return frappe.db.sql("""
         SELECT DISTINCT habitacion 
         FROM `tabreservation_detail_daily` 
         WHERE reserva_fecha BETWEEN %s AND %s
-        AND reservation_status = 'RESERVA PAGADA'
+        AND reservation_status IN ('RESERVA SIN PAGO', 'TENTATIVO')
+        ORDER BY habitacion ASC
     """, (from_date, to_date), as_list=True)
-
-    booked_room_list = [row[0] for row in booked_rooms] if booked_rooms else [""]
-
-    return frappe.db.sql("""
-        SELECT name FROM `tabroom` 
-        WHERE name NOT IN ({})
-        OR name IN (
-            SELECT DISTINCT habitacion 
-            FROM `tabreservation_detail_daily` 
-            WHERE reserva_fecha BETWEEN %s AND %s
-            AND reservation_status IN ('RESERVA SIN PAGO', 'TENTATIVO')
-        )
-        ORDER BY name ASC
-    """.format(", ".join(["%s"] * len(booked_room_list))), tuple(booked_room_list + [from_date, to_date]), as_list=True)
 
 
 
@@ -81,21 +67,14 @@ def get_available_rooms_without_status(doctype, txt, searchfield, start, page_le
 
     if not from_date or not to_date:
         return []
-
-    # Fetch booked rooms with status "RESERVA PAGADA"
-    booked_rooms = frappe.db.sql("""
+    
+    return frappe.db.sql("""
         SELECT DISTINCT habitacion 
         FROM `tabreservation_detail_daily` 
         WHERE reserva_fecha BETWEEN %s AND %s
+        AND reservation_status = 'RESERVA PAGADA'
+        ORDER BY habitacion ASC
     """, (from_date, to_date), as_list=True)
-
-    booked_room_list = [row[0] for row in booked_rooms] if booked_rooms else [""]
-
-    return frappe.db.sql("""
-        SELECT name FROM `tabroom` 
-        WHERE name NOT IN ({})
-        ORDER BY name ASC
-    """.format(", ".join(["%s"] * len(booked_room_list))), tuple(booked_room_list), as_list=True)
 
 
 
@@ -128,6 +107,7 @@ def create_reservation_details(reservation_id):
 
 @frappe.whitelist()
 def delete_reservation_daily(reserva_dia_id, habitacion):
+
     if not reserva_dia_id or not habitacion:
         return "Missing parameters"
 
@@ -138,3 +118,36 @@ def delete_reservation_daily(reserva_dia_id, habitacion):
         return f"Deleted {len(reservations)} records for habitacion: {habitacion}"
     
     return "No records found"
+
+
+
+# @frappe.whitelist()
+# @frappe.validate_and_sanitize_search_inputs
+# def get_available_rooms_without_status(doctype, txt, searchfield, start, page_len, filters):
+#     from_date = filters.get("from_date")
+#     to_date = filters.get("to_date")
+
+#     if not from_date or not to_date:
+#         return []
+
+#     # Fetch booked rooms with status "RESERVA PAGADA"
+#     booked_rooms = frappe.db.sql("""
+#         SELECT DISTINCT habitacion 
+#         FROM `tabreservation_detail_daily` 
+#         WHERE reserva_fecha BETWEEN %s AND %s
+#         AND reservation_status = 'RESERVA PAGADA'
+#     """, (from_date, to_date), as_list=True)
+
+#     booked_room_list = [row[0] for row in booked_rooms] if booked_rooms else []
+
+#     query = "SELECT name FROM `tabroom`"
+#     params = []
+
+#     if booked_room_list:
+#         placeholders = ", ".join(["%s"] * len(booked_room_list))
+#         query += f" WHERE name NOT IN ({placeholders})"
+#         params.extend(booked_room_list)
+
+#     query += " ORDER BY name ASC"
+
+#     return frappe.db.sql(query, tuple(params), as_list=True)

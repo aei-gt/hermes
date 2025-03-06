@@ -7,6 +7,8 @@ frappe.ui.form.on('reservation', {
             let next_day = frappe.datetime.add_days(frm.doc.fecha_entrada, 1);
             frm.set_value('fecha_salida', next_day);
         }
+        console.log("aaaa");
+        
         estado_reserva(frm);
     },
     fecha_salida: function(frm) {
@@ -21,8 +23,10 @@ frappe.ui.form.on('reservation', {
             let nights = frappe.datetime.get_day_diff(frm.doc.fecha_salida, frm.doc.fecha_entrada);
             frm.set_df_property('total_global', 'label', `Total Nights: ${nights}`);
             frm.fields_dict.total_global.$wrapper.css('color', 'red');
-            estado_reserva(frm);
         }
+        console.log("bbbb");
+
+        estado_reserva(frm);
     },
     total_abonado: function(frm) {
         frm.set_value('total_pendiente', frm.doc.total_global - frm.doc.total_abonado);
@@ -47,6 +51,8 @@ frappe.ui.form.on('reservation', {
     },show_room_not_payedtentative: function(frm) {
         console.log("Checkbox clicked.");
         estado_reserva(frm);
+        frm.refresh();
+        
     },
 });
 
@@ -110,28 +116,14 @@ function update_totals(frm) {
     frm.set_value('total_global', total_cost);
     frm.set_value('total_pendiente', total_cost - frm.doc.total_abonado);
 }
-// function delete_Res_daily(frm) {
-//     frm.doc.reserva_detalle.forEach(row => {
-//         frm.call({
-//             method: "hermes.hermes.doctype.reservation.reservation.delete_reservation_daily",
-//             args: {
-//                 reserva_dia_id: frm.doc.name,
-//                 habitacion: row.habitacion
-//             },
-//             callback: function(response) {
-//                 if (response.message) {
-//                     console.log("Deleted reservation details for:", row.habitacion);
-//                 }
-//             }
-//         });
-//     });
-// }
 
 
 function estado_reserva(frm) {    
+    let field = frm.fields_dict.reserva_detalle.grid.get_field("habitacion");
+
     if (!frm.doc.show_room_not_payedtentative) {
         console.log("Showing only fully free rooms.");
-        frm.fields_dict.reserva_detalle.grid.get_field("habitacion").get_query = function() {
+        field.get_query = function() {
             return {
                 query: "hermes.hermes.doctype.reservation.reservation.get_available_rooms_without_status",
                 filters: {
@@ -141,9 +133,8 @@ function estado_reserva(frm) {
             };
         };
     } else {
-        console.log("Showing free rooms + rooms with 'TENTATIVO' & 'RESERVA SIN PAGO'.");
-
-        frm.fields_dict.reserva_detalle.grid.get_field("habitacion").get_query = function() {
+        console.log("rooms with 'TENTATIVO' & 'RESERVA SIN PAGO'.");
+        field.get_query = function() {
             return {
                 query: "hermes.hermes.doctype.reservation.reservation.get_available_rooms",
                 filters: {
@@ -153,4 +144,10 @@ function estado_reserva(frm) {
             };
         };
     }
+
+     console.log(" Grid refresh karna zaroori hai taake naye results load hoon");
+        
+    frm.refresh_field('reserva_detalle');
+    // frm.refresh();
+    console.log("Grid refreshed.");
 }
