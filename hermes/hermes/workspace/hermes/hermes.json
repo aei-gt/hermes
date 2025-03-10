@@ -1,6 +1,11 @@
 {
- "charts": [],
- "content": "[{\"id\":\"ogS9IAnL7J\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">HERMES</span><br>\",\"col\":12}},{\"id\":\"Kb8iVsQID6\",\"type\":\"card\",\"data\":{\"card_name\":\"Reservation\",\"col\":4}},{\"id\":\"13bX9txdQh\",\"type\":\"card\",\"data\":{\"card_name\":\"Room\",\"col\":4}},{\"id\":\"zG7tTaNc_9\",\"type\":\"card\",\"data\":{\"card_name\":\"Reservation Datail Daily\",\"col\":4}},{\"id\":\"z_HMDPXUfX\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Calendario\",\"col\":3}}]",
+ "charts": [
+  {
+   "chart_name": "Ocupaci\u00f3n x Dia",
+   "label": "Ocupaci\u00f3n"
+  }
+ ],
+ "content": "[{\"id\":\"Kb8iVsQID6\",\"type\":\"card\",\"data\":{\"card_name\":\"Gesti\u00f3n de Reservas\",\"col\":4}},{\"id\":\"13bX9txdQh\",\"type\":\"card\",\"data\":{\"card_name\":\"Gesti\u00f3n de Habitaciones\",\"col\":4}},{\"id\":\"b_ORBUtkNh\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"jC3RVzASFw\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Calendario General\",\"col\":3}},{\"id\":\"sxci4PfpuC\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Ocupaci\u00f3n\",\"col\":12}},{\"id\":\"Z-eROIebf-\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Reservas Globales\",\"col\":4}}]",
  "creation": "2025-03-07 01:27:48.507573",
  "custom_blocks": [],
  "docstatus": 0,
@@ -16,26 +21,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Reservation",
-   "link_count": 1,
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Reservation",
-   "link_count": 0,
-   "link_to": "reservation",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Room",
+   "label": "Gesti\u00f3n de Habitaciones",
    "link_count": 1,
    "link_type": "DocType",
    "onboard": 0,
@@ -54,8 +40,8 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Reservation Datail Daily",
-   "link_count": 1,
+   "label": "Gesti\u00f3n de Reservas",
+   "link_count": 2,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -63,7 +49,17 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Reservation Datail Daily",
+   "label": "Reservaciones",
+   "link_count": 0,
+   "link_to": "reservation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Detalle de reservas",
    "link_count": 0,
    "link_to": "reservation_detail_daily",
    "link_type": "DocType",
@@ -71,11 +67,16 @@
    "type": "Link"
   }
  ],
- "modified": "2025-03-09 18:01:59.647762",
+ "modified": "2025-03-09 19:05:50.691954",
  "modified_by": "Administrator",
  "module": "Hermes",
  "name": "HERMES",
- "number_cards": [],
+ "number_cards": [
+  {
+   "label": "Reservas Globales",
+   "number_card_name": "Habitaciones Hoy"
+  }
+ ],
  "owner": "Administrator",
  "parent_page": "",
  "public": 1,
@@ -86,7 +87,7 @@
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Calendario",
+   "label": "Calendario General",
    "type": "URL",
    "url": "http://192.168.95.216/app/reservation_detail_daily/view/calendar/Room"
   }
