@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"ogS9IAnL7J\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">HERMES</span><br>\",\"col\":12}},{\"id\":\"Kb8iVsQID6\",\"type\":\"card\",\"data\":{\"card_name\":\"Reservation\",\"col\":4}},{\"id\":\"13bX9txdQh\",\"type\":\"card\",\"data\":{\"card_name\":\"Room\",\"col\":4}},{\"id\":\"zG7tTaNc_9\",\"type\":\"card\",\"data\":{\"card_name\":\"Reservation Datail Daily\",\"col\":4}}]",
+ "content": "[{\"id\":\"ogS9IAnL7J\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">HERMES</span><br>\",\"col\":12}},{\"id\":\"Kb8iVsQID6\",\"type\":\"card\",\"data\":{\"card_name\":\"Reservation\",\"col\":4}},{\"id\":\"13bX9txdQh\",\"type\":\"card\",\"data\":{\"card_name\":\"Room\",\"col\":4}},{\"id\":\"zG7tTaNc_9\",\"type\":\"card\",\"data\":{\"card_name\":\"Reservation Datail Daily\",\"col\":4}},{\"id\":\"z_HMDPXUfX\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Calendario\",\"col\":3}}]",
  "creation": "2025-03-07 01:27:48.507573",
  "custom_blocks": [],
  "docstatus": 0,
@@ -71,7 +71,7 @@
    "type": "Link"
   }
  ],
- "modified": "2025-03-07 02:20:46.140450",
+ "modified": "2025-03-09 18:01:59.647762",
  "modified_by": "Administrator",
  "module": "Hermes",
  "name": "HERMES",
@@ -82,6 +82,14 @@
  "quick_lists": [],
  "roles": [],
  "sequence_id": 41.2,
- "shortcuts": [],
+ "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Calendario",
+   "type": "URL",
+   "url": "http://192.168.95.216/app/reservation_detail_daily/view/calendar/Room"
+  }
+ ],
  "title": "HERMES"
 }
