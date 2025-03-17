@@ -51,8 +51,20 @@ def get_available_rooms(doctype, txt, searchfield, start, page_len, filters):
         FROM `tabreservation_detail_daily` 
         WHERE reserva_fecha BETWEEN %s AND %s
         AND reservation_status IN ('RESERVA SIN PAGO', 'TENTATIVO')
+        
+        UNION 
+        
+        SELECT DISTINCT name 
+        FROM `tabroom`
+        WHERE name NOT IN (
+            SELECT DISTINCT habitacion 
+            FROM `tabreservation_detail_daily` 
+            WHERE reserva_fecha BETWEEN %s AND %s
+        )
+        
         ORDER BY habitacion ASC
-    """, (from_date, to_date), as_list=True)
+    """, (from_date, to_date, from_date, to_date), as_list=True)
+
 
 
 
@@ -73,8 +85,19 @@ def get_available_rooms_without_status(doctype, txt, searchfield, start, page_le
         FROM `tabreservation_detail_daily` 
         WHERE reserva_fecha BETWEEN %s AND %s
         AND reservation_status = 'RESERVA PAGADA'
+        
+        UNION 
+        
+        SELECT DISTINCT name 
+        FROM `tabroom`
+        WHERE name NOT IN (
+            SELECT DISTINCT habitacion 
+            FROM `tabreservation_detail_daily` 
+            WHERE reserva_fecha BETWEEN %s AND %s
+        )
+        
         ORDER BY habitacion ASC
-    """, (from_date, to_date), as_list=True)
+    """, (from_date, to_date, from_date, to_date), as_list=True)
 
 
 
