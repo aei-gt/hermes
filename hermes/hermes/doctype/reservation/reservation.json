@@ -9,6 +9,7 @@
   "fecha_entrada",
   "fecha_salida",
   "cliente",
+  "customer_name",
   "telefono",
   "show_room_not_payedtentative",
   "column_break_gzqz",
@@ -30,6 +31,7 @@
    "fieldname": "fecha_entrada",
    "fieldtype": "Date",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Entry Date",
    "reqd": 1
   },
@@ -48,6 +50,7 @@
    "fieldname": "cliente",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Customer",
    "options": "Customer",
    "reqd": 1
@@ -118,7 +121,9 @@
   },
   {
    "fieldname": "telefono",
-   "fieldtype": "Read Only",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Phone",
    "read_only": 1
   },
@@ -152,12 +157,20 @@
    "fieldname": "show_room_not_payedtentative",
    "fieldtype": "Check",
    "label": "Show Room Not Payed/Tentative"
+  },
+  {
+   "fetch_from": "cliente.customer_name",
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "in_standard_filter": 1,
+   "label": "Customer Name",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-03-04 21:14:06.421090",
+ "modified": "2025-04-16 16:17:11.257267",
  "modified_by": "Administrator",
  "module": "Hermes",
  "name": "reservation",
@@ -177,6 +190,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

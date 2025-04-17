@@ -1,0 +1,38 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-07-23 13:57:30.662163",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_pdee",
+  "field_name"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_pdee",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "field_name",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Field Name",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-07-23 14:00:53.505992",
+ "modified_by": "Administrator",
+ "module": "Hermes",
+ "name": "Calendar Fields",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

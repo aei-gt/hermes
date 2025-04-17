@@ -2,6 +2,19 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('reservation', {
+    cliente:function(frm){
+        if (frm.doc.cliente){
+            frappe.db.get_doc('Customer', frm.doc.cliente).then(cust_doc => {
+            if(cust_doc.customer_primary_address) {
+                frappe.db.get_doc('Address', cust_doc.customer_primary_address).then(add_doc => {
+                    frm.set_value('telefono', add_doc.phone);})
+            }else 
+            {
+                frappe.msgprint(__('Customer does not have a primary address'));
+            }
+        })
+        }
+    },
     fecha_entrada: function(frm) {
         if (frm.doc.fecha_entrada) {
             let next_day = frappe.datetime.add_days(frm.doc.fecha_entrada, 1);

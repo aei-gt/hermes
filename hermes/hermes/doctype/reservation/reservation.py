@@ -18,10 +18,8 @@ class reservation(Document):
 
 
     def before_submit(self):
-        allowed_statuses = ["RESERVA SIN PAGO", "RESERVA PAGADA"]
-        
-        if self.estado_reserva not in allowed_statuses:
-            frappe.throw("You can only submit the document if 'estado_reserva' is 'RESERVA SIN PAGO' or 'RESERVA PAGADA'.")
+        if self.estado_reserva !="RESERVA PAGADA" and self.total_abonado !=0:
+            frappe.throw(" If  Reserva Pagada need have a positive value in Amount Paid (not 0).'.")
 
 
     
@@ -71,7 +69,7 @@ def get_available_rooms(doctype, txt, searchfield, start, page_len, filters):
 
 
 
-@frappe.whitelist()
+@frappe.whitelist() 
 @frappe.validate_and_sanitize_search_inputs
 def get_available_rooms_without_status(doctype, txt, searchfield, start, page_len, filters):
     from_date = filters.get("from_date")
@@ -80,24 +78,27 @@ def get_available_rooms_without_status(doctype, txt, searchfield, start, page_le
     if not from_date or not to_date:
         return []
     
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def get_available_rooms_without_status(doctype, txt, searchfield, start, page_len, filters):
+    from_date = filters.get("from_date")
+    to_date = filters.get("to_date")
+
+    if not from_date or not to_date:
+        return []
+
     return frappe.db.sql("""
-        SELECT DISTINCT habitacion 
-        FROM `tabreservation_detail_daily` 
-        WHERE reserva_fecha BETWEEN %s AND %s
-        AND reservation_status = 'RESERVA PAGADA'
-        
-        UNION 
-        
-        SELECT DISTINCT name 
+        SELECT name
         FROM `tabroom`
         WHERE name NOT IN (
-            SELECT DISTINCT habitacion 
-            FROM `tabreservation_detail_daily` 
+            SELECT DISTINCT habitacion
+            FROM `tabreservation_detail_daily`
             WHERE reserva_fecha BETWEEN %s AND %s
+            AND reservation_status IN ('RESERVA SIN PAGO', 'TENTATIVO','RESERVA PAGADA')
         )
-        
-        ORDER BY habitacion ASC
-    """, (from_date, to_date, from_date, to_date), as_list=True)
+        ORDER BY name ASC
+        LIMIT %s OFFSET %s
+    """, (from_date, to_date, page_len, start), as_list=True)
 
 
 
@@ -123,7 +124,10 @@ def create_reservation_details(reservation_id):
                 "reserva_dia_id": reservation.name,
                 "habitacion": row.habitacion,
                 "reserva_fecha": current_date,
-                "reservation_status": reservation.estado_reserva
+                "reservation_status": reservation.estado_reserva,
+                "customer": reservation.cliente,
+                "customer_name":reservation.customer_name,
+                "phone_number":reservation.telefono
             })
             doc.insert(ignore_permissions=True)
             current_date = add_days(current_date, 1)
