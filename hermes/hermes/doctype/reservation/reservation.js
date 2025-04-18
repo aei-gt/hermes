@@ -5,14 +5,10 @@ frappe.ui.form.on('reservation', {
     cliente:function(frm){
         if (frm.doc.cliente){
             frappe.db.get_doc('Customer', frm.doc.cliente).then(cust_doc => {
-            if(cust_doc.customer_primary_address) {
-                frappe.db.get_doc('Address', cust_doc.customer_primary_address).then(add_doc => {
-                    frm.set_value('telefono', add_doc.phone);})
-            }else 
-            {
-                frappe.msgprint(__('Customer does not have a primary address'));
+            if(cust_doc.custom_customer_phone) {
+                    frm.set_value('telefono', cust_doc.custom_customer_phone)
             }
-        })
+            });    
         }
     },
     fecha_entrada: function(frm) {

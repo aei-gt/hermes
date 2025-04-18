@@ -13,14 +13,17 @@ class reservation(Document):
         records = frappe.get_all("reservation_detail_daily", filters={"reserva_dia_id": self.name})
         for record in records:
             frappe.db.set_value("reservation_detail_daily", record,"reservation_status" , self.estado_reserva)
+            frappe.db.set_value("reservation_detail_daily", record,"customer" , self.cliente)
+            frappe.db.set_value("reservation_detail_daily", record,"customer_name" , self.customer_name)
+            frappe.db.set_value("reservation_detail_daily", record,"phone_number" , self.telefono)
         frappe.db.commit()
 
 
 
     def before_submit(self):
-        if self.estado_reserva !="RESERVA PAGADA" and self.total_abonado !=0:
-            frappe.throw(" If  Reserva Pagada need have a positive value in Amount Paid (not 0).'.")
-
+        if self.estado_reserva == "RESERVA PAGADA" and self.total_abonado <= 0:
+            frappe.throw("If the reservation is marked as 'RESERVA PAGADA', Amount Paid must be greater than 0.")
+# 
 
     
 

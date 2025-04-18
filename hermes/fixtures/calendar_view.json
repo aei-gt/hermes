@@ -1,10 +1,30 @@
 [
  {
   "all_day": 1,
+  "custom_extra_fields": [
+   {
+    "field_name": "reservation_status",
+    "parent": "Room",
+    "parentfield": "custom_extra_fields",
+    "parenttype": "Calendar View"
+   },
+   {
+    "field_name": "customer_name",
+    "parent": "Room",
+    "parentfield": "custom_extra_fields",
+    "parenttype": "Calendar View"
+   },
+   {
+    "field_name": "phone_number",
+    "parent": "Room",
+    "parentfield": "custom_extra_fields",
+    "parenttype": "Calendar View"
+   }
+  ],
   "docstatus": 0,
   "doctype": "Calendar View",
   "end_date_field": "reserva_fecha",
-  "modified": "2025-03-04 22:07:50.484444",
+  "modified": "2025-04-18 09:56:53.698557",
   "name": "Room",
   "reference_doctype": "reservation_detail_daily",
   "start_date_field": "reserva_fecha",
