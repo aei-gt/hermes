@@ -12,7 +12,7 @@ frappe.ui.form.on('reservation', {
 
             // Call the backend function to fetch room availability
             frappe.call({
-                method: "hermes.hermes.doctype.reservation.reservation.get_room_availability",  // Replace with the correct path
+                method: "hermes.hermes.doctype.reservation.reservation.get_availability",  // Replace with the correct path
                 args: {
                     from_date: frm.doc.fecha_entrada,
                     to_date: frm.doc.fecha_salida
@@ -27,7 +27,58 @@ frappe.ui.form.on('reservation', {
             });
             
         });
-        // estado_reserva(frm);
+        if (frm.doc.fecha_entrada && frm.doc.fecha_salida) {
+            if(frm.doc.show_room_not_payedtentative) {
+            console.log(frm.doc.show_room_not_payedtentative);
+            frappe.call({
+                method: "hermes.hermes.doctype.reservation.reservation.set_query_for_habitacion",
+                args: {
+                    from_date: frm.doc.fecha_entrada,
+                    to_date: frm.doc.fecha_salida,
+                    tantativo_pagado: frm.doc.show_room_not_payedtentative
+                },
+                callback: function (active_res) {
+                    const active_rooms = (active_res.message || []).map(room => room.name);
+                    console.log("Filtered Room Names:", active_rooms);
+
+                    frm.fields_dict.reserva_detalle.grid.get_field('habitacion').get_query = function () {
+                        return {
+                            filters: [
+                                ['name', 'in', active_rooms],
+                                ['habilitado', '=', 1]
+                            ]
+                        };
+                    };
+                    
+                }
+            });
+        }
+        else 
+            {
+                console.log(frm.doc.show_room_not_payedtentative);
+                frappe.call({
+                    method: "hermes.hermes.doctype.reservation.reservation.set_query_for_habitacion",
+                    args: {
+                        from_date: frm.doc.fecha_entrada,
+                        to_date: frm.doc.fecha_salida
+                    },
+                    callback: function (available_res) {
+                        const available_rooms = (available_res.message || []).map(room => room.name);
+                        console.log("Filtered Room Names:", available_rooms);
+
+                        frm.fields_dict.reserva_detalle.grid.get_field('habitacion').get_query = function () {
+                            return {
+                                filters: [
+                                    ['name', 'in', available_rooms],
+                                    ['habilitado', '=', 1]
+                                ]
+                            };
+                        };
+                        
+                    }
+                });
+            }
+        }
     },
     cliente:function(frm){
         if (frm.doc.cliente){
@@ -45,7 +96,7 @@ frappe.ui.form.on('reservation', {
         }
         console.log("aaaa");
         
-        // estado_reserva(frm);
+        set_available_rooms_query(frm);
     },
     fecha_salida: function(frm) {
         if (frm.doc.fecha_entrada && frm.doc.fecha_salida) {
@@ -62,7 +113,7 @@ frappe.ui.form.on('reservation', {
         }
         console.log("bbbb");
 
-        // estado_reserva(frm);
+        set_available_rooms_query(frm);
     },
     total_abonado: function(frm) {
         frm.set_value('total_pendiente', frm.doc.total_global - frm.doc.total_abonado);
@@ -81,9 +132,11 @@ frappe.ui.form.on('reservation', {
                 });
         }
         update_totals
-    },show_room_not_payedtentative: function(frm) {
+    },
+    show_room_not_payedtentative: function(frm) {
         console.log("Checkbox clicked.");
-        // estado_reserva(frm);
+        set_available_rooms_query(frm);
+        frm.refresh_field('reserva_detalle');
         frm.refresh();
         
     },
@@ -151,37 +204,36 @@ function update_totals(frm) {
 }
 
 
-function estado_reserva(frm) {    
-    let field = frm.fields_dict.reserva_detalle.grid.get_field("habitacion");
+function set_available_rooms_query(frm) {    
+        if (frm.doc.fecha_entrada && frm.doc.fecha_salida) {
+            if(frm.doc.show_room_not_payedtentative) {
+            console.log(frm.doc.show_room_not_payedtentative);
+            frappe.call({
+                method: "hermes.hermes.doctype.reservation.reservation.set_query_for_habitacion",
+                args: {
+                    from_date: frm.doc.fecha_entrada,
+                    to_date: frm.doc.fecha_salida,
+                    tantativo_pagado: frm.doc.show_room_not_payedtentative
+                },
+                callback: function (active_res) {
+                    const active_rooms = (active_res.message || []).map(room => room.name);
+                    console.log("Filtered Room Names:", active_rooms);
 
-    if (!frm.doc.show_room_not_payedtentative) {
-        console.log("Showing only fully free rooms.");
-        field.get_query = function() {
-            return {
-                query: "hermes.hermes.doctype.reservation.reservation.get_available_rooms_without_status",
-                filters: {
-                    from_date: frm.doc.fecha_entrada,
-                    to_date: frm.doc.fecha_salida
+                    frm.fields_dict.reserva_detalle.grid.get_field('habitacion').get_query = function () {
+                        return {
+                            filters: [
+                                ['name', 'in', active_rooms],
+                                ['habilitado', '=', 1]
+                            ]
+                        };
+                    };
+                    
                 }
-            };
-        };
-    } else {
-        console.log("rooms with 'TENTATIVO' & 'RESERVA SIN PAGO'.");
-        field.get_query = function() {
-            return {
-                query: "hermes.hermes.doctype.reservation.reservation.get_available_rooms",
-                filters: {
-                    from_date: frm.doc.fecha_entrada,
-                    to_date: frm.doc.fecha_salida
-                }
-            };
-        };
+            });
+            console.log("Grid refreshed.");
+            frm.refresh_field('reserva_detalle');
+        }
     }
-
-     console.log(" Grid refresh karna zaroori hai taake naye results load hoon");
-        
-    frm.refresh_field('reserva_detalle');
-    console.log("Grid refreshed.");
 }
 
 
