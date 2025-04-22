@@ -1,0 +1,101 @@
+{
+ "actions": [],
+ "autoname": "format:{reserva_fecha}-{habitacion}",
+ "creation": "2025-04-22 05:27:13.075383",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "reserva_dia_id",
+  "reserva_fecha",
+  "habitacion",
+  "reservation_status",
+  "column_break_pamk",
+  "customer",
+  "customer_name",
+  "phone_number"
+ ],
+ "fields": [
+  {
+   "fieldname": "reserva_dia_id",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Reservation ID",
+   "options": "reservation"
+  },
+  {
+   "fieldname": "reserva_fecha",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Reservation Date"
+  },
+  {
+   "fieldname": "habitacion",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Tour",
+   "options": "Tour"
+  },
+  {
+   "fieldname": "reservation_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Reservation Status",
+   "options": "\nTENTATIVO\nRESERVA SIN PAGO\nRESERVA PAGADA\nNO SHOW"
+  },
+  {
+   "fieldname": "column_break_pamk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Customer",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Customer Name"
+  },
+  {
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Phone Number"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_calendar_and_gantt": 1,
+ "links": [],
+ "modified": "2025-04-22 05:29:18.372472",
+ "modified_by": "Administrator",
+ "module": "Hermes",
+ "name": "Tour Reservation Detail Daily",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

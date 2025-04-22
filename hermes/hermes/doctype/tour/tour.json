@@ -1,0 +1,71 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:tour_name",
+ "creation": "2025-04-22 04:47:53.626277",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "tour_detail_section",
+  "tour_name",
+  "column_break_idjp",
+  "base_price",
+  "active"
+ ],
+ "fields": [
+  {
+   "fieldname": "tour_name",
+   "fieldtype": "Data",
+   "label": "Tour Name",
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_idjp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "base_price",
+   "fieldtype": "Currency",
+   "label": "Base Price",
+   "precision": "2"
+  },
+  {
+   "default": "0",
+   "fieldname": "active",
+   "fieldtype": "Check",
+   "label": "Active"
+  },
+  {
+   "fieldname": "tour_detail_section",
+   "fieldtype": "Section Break",
+   "label": "Tour Detail"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-04-22 05:48:22.706378",
+ "modified_by": "Administrator",
+ "module": "Hermes",
+ "name": "Tour",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
