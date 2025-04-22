@@ -2,8 +2,9 @@
 # For license information, please see license.txt
 
 import frappe
-from frappe.model.document import Document
+from datetime import datetime, timedelta
 from frappe.utils import add_days
+from frappe.model.document import Document
 
 class reservation(Document):
     def on_cancel(self):
@@ -64,22 +65,10 @@ def get_available_rooms(doctype, txt, searchfield, start, page_len, filters):
         )
         
         ORDER BY habitacion ASC
-    """, (from_date, to_date, from_date, to_date), as_list=True)
+    """, (from_date, to_date,page_len, start), as_list=True)
 
 
 
-
-
-
-
-@frappe.whitelist() 
-@frappe.validate_and_sanitize_search_inputs
-def get_available_rooms_without_status(doctype, txt, searchfield, start, page_len, filters):
-    from_date = filters.get("from_date")
-    to_date = filters.get("to_date")
-
-    if not from_date or not to_date:
-        return []
     
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
@@ -115,13 +104,24 @@ def create_reservation_details(reservation_id):
     if not reservation:
         frappe.throw("Reservation not found")
 
-    # Pehle purane records delete karein jo iss reservation_id ke hain
+    # Purane reservation detail records delete karo
     delete_related_reservation_details(reservation.name)
 
-    # Naye records insert karain
+    # Naye records insert karo
     for row in reservation.reserva_detalle:
         current_date = reservation.fecha_entrada
         while current_date < reservation.fecha_salida:
+            # Check agar ye room is date pe already reserved hai
+            exists = frappe.db.exists(
+                "reservation_detail_daily",
+                {
+                    "habitacion": row.habitacion,
+                    "reserva_fecha": current_date
+                }
+            )
+            if exists:
+                frappe.throw(f"Room {row.habitacion} is already reserved on {current_date}")
+
             doc = frappe.get_doc({
                 "doctype": "reservation_detail_daily",
                 "reserva_dia_id": reservation.name,
@@ -129,8 +129,8 @@ def create_reservation_details(reservation_id):
                 "reserva_fecha": current_date,
                 "reservation_status": reservation.estado_reserva,
                 "customer": reservation.cliente,
-                "customer_name":reservation.customer_name,
-                "phone_number":reservation.telefono
+                "customer_name": reservation.customer_name,
+                "phone_number": reservation.telefono
             })
             doc.insert(ignore_permissions=True)
             current_date = add_days(current_date, 1)
@@ -151,33 +151,35 @@ def delete_reservation_daily(reserva_dia_id, habitacion):
 
 
 
-# @frappe.whitelist()
-# @frappe.validate_and_sanitize_search_inputs
-# def get_available_rooms_without_status(doctype, txt, searchfield, start, page_len, filters):
-#     from_date = filters.get("from_date")
-#     to_date = filters.get("to_date")
 
-#     if not from_date or not to_date:
-#         return []
 
-#     # Fetch booked rooms with status "RESERVA PAGADA"
-#     booked_rooms = frappe.db.sql("""
-#         SELECT DISTINCT habitacion 
-#         FROM `tabreservation_detail_daily` 
-#         WHERE reserva_fecha BETWEEN %s AND %s
-#         AND reservation_status = 'RESERVA PAGADA'
-#     """, (from_date, to_date), as_list=True)
 
-#     booked_room_list = [row[0] for row in booked_rooms] if booked_rooms else []
+@frappe.whitelist()
+def get_room_availability(from_date, to_date):
+    try:
+        from_date = datetime.strptime(from_date, "%Y-%m-%d").date()
+        to_date = datetime.strptime(to_date, "%Y-%m-%d").date()
+    except ValueError:
+        frappe.throw("Invalid date format. Please use YYYY-MM-DD.")
+    date_range = get_date_range(from_date, to_date)
+    availability = []
+    rooms = frappe.get_all("room", filters={"habilitado": 1}, fields=["name"])
+    for room in rooms:
+        room_status = {"room": room.name, "dates": {}}
+        for date in date_range:
+            booking_exists = frappe.db.exists("reservation_detail_daily",{"reserva_fecha": date.strftime("%Y-%m-%d"), "habitacion": room.name})
+            if booking_exists :
+                room_status["dates"][str(date)] = "Reserved"
+            else:
+                room_status["dates"][str(date)]="Available"
 
-#     query = "SELECT name FROM `tabroom`"
-#     params = []
+        availability.append(room_status)
+    return {
+        "rooms": availability,
+        "dates": [str(d) for d in date_range]
+    }
 
-#     if booked_room_list:
-#         placeholders = ", ".join(["%s"] * len(booked_room_list))
-#         query += f" WHERE name NOT IN ({placeholders})"
-#         params.extend(booked_room_list)
 
-#     query += " ORDER BY name ASC"
+def get_date_range(start_date, end_date):
+    return [(start_date + timedelta(days=i)) for i in range((end_date - start_date).days + 1)]
 
-#     return frappe.db.sql(query, tuple(params), as_list=True)

@@ -2,6 +2,33 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('reservation', {
+    refresh: function(frm) {
+        frm.add_custom_button(__('Check Room Availability'), function () {
+            // Check if 'From Date' and 'To Date' are selected
+            if (!frm.doc.fecha_entrada || !frm.doc.fecha_salida) {
+                frappe.msgprint("Please select 'From Date' and 'To Date' first.");
+                return;
+            }
+
+            // Call the backend function to fetch room availability
+            frappe.call({
+                method: "hermes.hermes.doctype.reservation.reservation.get_room_availability",  // Replace with the correct path
+                args: {
+                    from_date: frm.doc.fecha_entrada,
+                    to_date: frm.doc.fecha_salida
+                },
+                callback: function (r) {
+                    if (r.message) {
+                        console.log("Room availability data:", r.message);
+                        
+                        open_room_date_range_dialog(r.message.rooms, r.message.dates);
+                    }
+                }
+            });
+            
+        });
+        // estado_reserva(frm);
+    },
     cliente:function(frm){
         if (frm.doc.cliente){
             frappe.db.get_doc('Customer', frm.doc.cliente).then(cust_doc => {
@@ -18,7 +45,7 @@ frappe.ui.form.on('reservation', {
         }
         console.log("aaaa");
         
-        estado_reserva(frm);
+        // estado_reserva(frm);
     },
     fecha_salida: function(frm) {
         if (frm.doc.fecha_entrada && frm.doc.fecha_salida) {
@@ -35,13 +62,10 @@ frappe.ui.form.on('reservation', {
         }
         console.log("bbbb");
 
-        estado_reserva(frm);
+        // estado_reserva(frm);
     },
     total_abonado: function(frm) {
         frm.set_value('total_pendiente', frm.doc.total_global - frm.doc.total_abonado);
-    },
-    refresh: function(frm) {
-        estado_reserva(frm);
     },
     after_save:function(frm){
             if(!frm.is_new()) {
@@ -59,7 +83,7 @@ frappe.ui.form.on('reservation', {
         update_totals
     },show_room_not_payedtentative: function(frm) {
         console.log("Checkbox clicked.");
-        estado_reserva(frm);
+        // estado_reserva(frm);
         frm.refresh();
         
     },
@@ -157,6 +181,87 @@ function estado_reserva(frm) {
      console.log(" Grid refresh karna zaroori hai taake naye results load hoon");
         
     frm.refresh_field('reserva_detalle');
-    // frm.refresh();
     console.log("Grid refreshed.");
+}
+
+
+function open_room_date_range_dialog(rooms, dateRange) {
+    frappe.dom.set_style(`
+        .modal-xl {
+            max-width: 1500px !important;
+        }
+        .available-cell {
+            background-color: #d4edda !important;
+            color: #155724 !important;
+        }
+        .reserved-cell {
+            background-color: #f8d7da !important;
+            color: #721c24 !important;
+        }
+    `);
+    
+    // Create the dialog
+    let d = new frappe.ui.Dialog({
+        title: 'Room Availability',
+        size: 'extra-large',
+        fields: [{
+            label: 'Room Availability',
+            fieldname: 'table',
+            fieldtype: 'Table',
+            cannot_add_rows: true,
+            cannot_delete_rows: true,
+            in_place_edit: true,
+        data: (rooms || []).map(room => {
+            let row = {
+                room: room.room
+            };
+            dateRange.forEach((date, index) => {
+                row['date_' + index] = room.dates[date] || "";
+            });
+            return row;
+        }),
+        fields: [
+            {
+                label: 'Room',
+                fieldname: 'room',
+                fieldtype: 'Link',
+                options: 'room',
+                in_list_view: 1,
+                read_only: 1,
+                columns: 1,
+                colsize: 1
+            }
+        ].concat(dateRange.map((date, index) => {
+            return {
+                label: date,
+                fieldname: 'date_' + index,
+                fieldtype: 'Data',
+                in_list_view: 1,
+                read_only: 1,
+                columns: 1,
+                colsize: 1
+            };
+        }))
+        }],
+        primary_action_label: 'Save',
+        primary_action(values) {
+            console.log(values);
+            d.hide();
+        },
+    });
+    const grid = d.fields_dict.table.grid;
+    grid.grid_rows.forEach(row => {
+        const doc = row.doc;
+        dateRange.forEach((date, index) => {
+            const fieldname = 'date_' + index;
+            const $cell = row.row.find(`[data-fieldname="${fieldname}"]`);
+            const value = doc[fieldname];
+            if (value === "Reserved") {
+                $cell.addClass('reserved-cell');
+            } else if (value === "Available") {
+                $cell.addClass('available-cell');
+            }
+        });
+    });
+    d.show();
 }
