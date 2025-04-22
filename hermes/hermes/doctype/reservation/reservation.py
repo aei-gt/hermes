@@ -23,16 +23,9 @@ class reservation(Document):
         if self.estado_reserva == "RESERVA PAGADA" and self.total_abonado <= 0:
             frappe.throw("If the reservation is marked as 'RESERVA PAGADA', Amount Paid must be greater than 0.")
 
-
-
-
 def delete_related_reservation_details(reservation_id):
     frappe.db.delete("reservation_detail_daily", {"reserva_dia_id": reservation_id})
     frappe.db.commit()
-
-
-
-
 
 @frappe.whitelist()
 def create_reservation_details(reservation_id):
@@ -124,37 +117,25 @@ def set_query_for_habitacion(from_date, to_date, tantativo_pagado=None):
     if not from_date or not to_date:
         return []
     if tantativo_pagado:
-        frappe.msgprint("Tentative and paid reservations are included")
-        booked_rooms = frappe.get_all("reservation_detail_daily",
+        excluded_statuses = ["RESERVA SIN PAGO", "TENTATIVO"]
+    else:
+        excluded_statuses = ["RESERVA SIN PAGO", "TENTATIVO", "RESERVA PAGADA"]
+    booked_rooms = frappe.get_all(
+        "reservation_detail_daily",
         filters={
             "reserva_fecha": ["between", [from_date, to_date]],
-            "reservation_status": ["in", ["RESERVA SIN PAGO","TENTATIVO"]]
+            "reservation_status": ["in", excluded_statuses]
         },fields=["habitacion"],distinct=True)
-        booked_room_names = [room["habitacion"] for room in booked_rooms]
-        filters = {}
+
+    booked_room_names = [room["habitacion"] for room in booked_rooms]
+    filters = {}
+    if tantativo_pagado:
         if booked_room_names:
-             frappe.msgprint("Tentative and paid reservations are included")
-             filters["name"] = ["in", booked_room_names]
-        available_rooms = frappe.get_all("room",filters=filters,fields=["name"],order_by="name asc")
-        if not available_rooms:
-            frappe.msgprint("No available rooms found")
-        return available_rooms
+            filters["name"] = ["in", booked_room_names]
     else:
-        frappe.msgprint("No available rooms found")
-        booked_rooms = frappe.get_all(
-            "reservation_detail_daily",
-            filters={
-                "reserva_fecha": ["between", [from_date, to_date]],
-                "reservation_status": ["in", ["RESERVA SIN PAGO","TENTATIVO", "RESERVA PAGADA"]]
-            },fields=["habitacion"],distinct=True)
-        filters = {}
-        booked_room_names = [room["habitacion"] for room in booked_rooms]
-
         if booked_room_names:
-                frappe.msgprint("No available rooms found")
-                filters["name"] = ["not in", booked_room_names]
-
-        available_rooms = frappe.get_all("room",filters=filters,fields=["name"],order_by="name asc")
-        if not available_rooms:
-            frappe.msgprint("No available rooms found")
-        return available_rooms
+            filters["name"] = ["not in", booked_room_names]
+    available_rooms = frappe.get_all("room",filters=filters,fields=["name"],order_by="name asc")
+    if not available_rooms:
+        frappe.msgprint("No available rooms found in selected dates.")
+    return available_rooms
