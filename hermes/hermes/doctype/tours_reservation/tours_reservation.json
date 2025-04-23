@@ -1,6 +1,6 @@
 {
  "actions": [],
- "allow_rename": 1,
+ "autoname": "format:T{YY}-{#}",
  "creation": "2025-04-22 05:28:24.796621",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -23,7 +23,8 @@
   "column_break_veji",
   "amount_paid",
   "column_break_ocge",
-  "outstanding_balance"
+  "outstanding_balance",
+  "amended_from"
  ],
  "fields": [
   {
@@ -52,13 +53,15 @@
    "fetch_from": "customer.customer_name",
    "fieldname": "customer_name",
    "fieldtype": "Data",
-   "label": "Customer Name"
+   "label": "Customer Name",
+   "read_only": 1
   },
   {
    "fetch_from": "customer.custom_customer_phone",
    "fieldname": "phone",
    "fieldtype": "Data",
-   "label": "Phone"
+   "label": "Phone",
+   "read_only": 1
   },
   {
    "default": "0",
@@ -106,6 +109,7 @@
    "label": "Total Cost",
    "non_negative": 1,
    "precision": "2",
+   "read_only": 1,
    "reqd": 1
   },
   {
@@ -125,11 +129,13 @@
    "fieldtype": "Column Break"
   },
   {
+   "default": "0",
    "fieldname": "outstanding_balance",
    "fieldtype": "Currency",
    "label": "Outstanding Balance",
    "non_negative": 1,
    "precision": "2",
+   "read_only": 1,
    "reqd": 1
   },
   {
@@ -141,15 +147,27 @@
    "fieldtype": "Table",
    "label": "Tours Detail",
    "options": "Tour Detail"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Tours Reservation",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [],
- "modified": "2025-04-22 06:54:33.590229",
+ "modified": "2025-04-23 01:19:08.844846",
  "modified_by": "Administrator",
  "module": "Hermes",
  "name": "Tours Reservation",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
