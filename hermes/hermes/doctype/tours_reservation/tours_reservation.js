@@ -1,7 +1,7 @@
 // Copyright (c) 2025, aet and contributors
 // For license information, please see license.txt
 
-frappe.ui.form.on("Tours Reservation", {
+frappe.ui.form.on("Tours Reservation", {  
     amount_paid: function(frm) {
         calculate_total_pending(frm);        
     },
@@ -53,15 +53,15 @@ frappe.ui.form.on("Tours Reservation", {
                 }
             });
         }
-        update_totals
     },
-
-    entry_date: function(frm) {
-        if (frm.doc.entry_date) {
-            let next_day = frappe.datetime.add_days(frm.doc.entry_date, 1);
-            frm.set_value('departure_date', next_day);
+    validate: function(frm) {
+        if (!frm.doc.amount_paid) {
+            frappe.msgprint(__('Amount Paid is required before saving the document.'));
+            frappe.validated = false;
         }
-    },
+    }
+
+
 });
 
 frappe.ui.form.on('Tour Detail', {
@@ -77,6 +77,25 @@ frappe.ui.form.on('Tour Detail', {
         let total = count * price;
 
         frappe.model.set_value(cdt, cdn, 'total_tour_price', total);
+    },
+    before_tours_detail_remove: function (frm, cdt, cdn) {
+        let row = locals[cdt][cdn];
+        if (row && row.tour) {
+            
+            frappe.call({
+                method: "hermes.hermes.doctype.tours_reservation.tours_reservation.delete_reservation_daily",
+                args: {
+                    reserva_dia_id: frm.doc.name,
+                    tour: row.tour
+                },
+                callback: function (response) {
+                    
+                }
+            });
+        }
+        
+    },tours_detail_remove:function(frm){
+        calculate_total(frm);
     }
 });
 
@@ -97,3 +116,4 @@ function calculate_total_pending(frm) {
 
     frm.set_value('outstanding_balance', pending_amount);
 }
+
