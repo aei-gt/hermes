@@ -4,23 +4,18 @@
 frappe.ui.form.on('reservation', {
     refresh: function(frm) {
         frm.add_custom_button(__('Check Room Availability'), function () {
-            // Check if 'From Date' and 'To Date' are selected
             if (!frm.doc.fecha_entrada || !frm.doc.fecha_salida) {
                 frappe.msgprint("Please select 'From Date' and 'To Date' first.");
                 return;
             }
-
-            // Call the backend function to fetch room availability
             frappe.call({
-                method: "hermes.hermes.doctype.reservation.reservation.get_availability",  // Replace with the correct path
+                method: "hermes.hermes.doctype.reservation.reservation.get_availability",
                 args: {
                     from_date: frm.doc.fecha_entrada,
                     to_date: frm.doc.fecha_salida
                 },
                 callback: function (r) {
-                    if (r.message) {
-                        console.log("Room availability data:", r.message);
-                        
+                    if (r.message) {                        
                         open_room_date_range_dialog(r.message.rooms, r.message.dates);
                     }
                 }
@@ -42,8 +37,6 @@ frappe.ui.form.on('reservation', {
             let next_day = frappe.datetime.add_days(frm.doc.fecha_entrada, 1);
             frm.set_value('fecha_salida', next_day);
         }
-        console.log("aaaa");
-        
         set_available_rooms_query(frm);
     },
     fecha_salida: function(frm) {
@@ -59,8 +52,6 @@ frappe.ui.form.on('reservation', {
             frm.set_df_property('total_global', 'label', `Total Nights: ${nights}`);
             frm.fields_dict.total_global.$wrapper.css('color', 'red');
         }
-        console.log("bbbb");
-
         set_available_rooms_query(frm);
     },
     total_abonado: function(frm) {
@@ -82,7 +73,6 @@ frappe.ui.form.on('reservation', {
         update_totals
     },
     show_room_not_payedtentative: function(frm) {
-        console.log("Checkbox clicked.");
         set_available_rooms_query(frm);
         frm.refresh_field('reserva_detalle');
         frm.refresh();
@@ -177,9 +167,7 @@ function set_available_rooms_query(frm) {
                 let updated_rows = frm.doc.reserva_detalle.filter(row => row.habitacion);
                 frm.doc.reserva_detalle = updated_rows;
 
-                frm.refresh_field('reserva_detalle');
-                console.log("Empty rows removed and grid refreshed.");
-                
+                frm.refresh_field('reserva_detalle');                
             }
         });
     }
@@ -207,7 +195,6 @@ function set_available_rooms_query(frm) {
                     frm.doc.reserva_detalle = updated_rows;
 
                     frm.refresh_field('reserva_detalle');
-                    console.log("Empty rows removed and grid refreshed.");
                 }
             });
         }
@@ -216,24 +203,42 @@ function set_available_rooms_query(frm) {
 
 
 function open_room_date_range_dialog(rooms, dateRange) {
+    let dialogSize = 'small';
+    if (dateRange.length > 3 && dateRange.length <= 5) {
+        dialogSize = 'large';
+    } else if (dateRange.length > 5) {
+        dialogSize = 'extra-large';
+    }
+    col = 3;
+    if (dateRange.length > 2 && dateRange.length <= 4) {
+        col = 2;
+    } else if (dateRange.length > 4) {
+        col = 1;
+    }
     frappe.dom.set_style(`
+        .modal-sm {
+            max-width: 780px !important;
+        }
+        .modal-lg {
+            max-width: 1150px !important;
+        }
         .modal-xl {
-            max-width: 1500px !important;
+            max-width: 1700px !important;
         }
         .available-cell {
-            background-color: #d4edda !important;
-            color: #155724 !important;
+            background-color:rgb(140, 233, 162) !important;
+            color:rgb(0, 150, 35) !important;
         }
         .reserved-cell {
-            background-color: #f8d7da !important;
-            color: #721c24 !important;
+            background-color:rgb(255, 137, 147) !important;
+            color:rgb(156, 0, 16) !important;
         }
     `);
     
     // Create the dialog
     let d = new frappe.ui.Dialog({
         title: 'Room Availability',
-        size: 'extra-large',
+        size: dialogSize,
         fields: [{
             label: 'Room Availability',
             fieldname: 'table',
@@ -241,6 +246,7 @@ function open_room_date_range_dialog(rooms, dateRange) {
             cannot_add_rows: true,
             cannot_delete_rows: true,
             in_place_edit: true,
+            allow_child_item_selection: true,
         data: (rooms || []).map(room => {
             let row = {
                 room: room.room
@@ -258,8 +264,8 @@ function open_room_date_range_dialog(rooms, dateRange) {
                 options: 'room',
                 in_list_view: 1,
                 read_only: 1,
-                columns: 1,
-                colsize: 1
+                columns: col,
+                colsize: col
             }
         ].concat(dateRange.map((date, index) => {
             return {
@@ -268,14 +274,42 @@ function open_room_date_range_dialog(rooms, dateRange) {
                 fieldtype: 'Data',
                 in_list_view: 1,
                 read_only: 1,
-                columns: 1,
-                colsize: 1
+                columns: col,
+                colsize: col
             };
         }))
         }],
-        primary_action_label: 'Save',
+        primary_action_label: 'Fetch Rooms',
         primary_action(values) {
-            console.log(values);
+            let selectedRows = d.fields_dict.table.grid.get_selected_children();
+        
+            if (selectedRows && selectedRows.length > 0) {
+                selectedRows.forEach(row => {
+                    let newRow = frappe.model.add_child(cur_frm.doc, "reservation_detail", "reserva_detalle");
+                    newRow.habitacion = row.room;
+                    if (newRow.habitacion) {
+                        frappe.call({
+                            method: 'frappe.client.get_value',
+                            args: {
+                                doctype: 'room',
+                                filters: { name: newRow.habitacion },
+                                fieldname: 'costo'
+                            },
+                            callback: function(response) {
+                                if (response.message) {
+                                    // Set the 'costo' field in the child table
+                                    frappe.model.set_value(newRow.doctype, newRow.name, 'precio_base', response.message.costo);
+                                }
+                            }
+                        });
+                    }
+                });
+                cur_frm.refresh_field("reserva_detalle");
+            } else {
+                frappe.msgprint(__('Please select at least one row.'));
+            }
+        
+            // Hide the dialog
             d.hide();
         },
     });

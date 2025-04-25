@@ -137,5 +137,6 @@ def set_query_for_habitacion(from_date, to_date, tantativo_pagado=None):
             filters["name"] = ["not in", booked_room_names]
     available_rooms = frappe.get_all("room",filters=filters,fields=["name"],order_by="name asc")
     if not available_rooms:
-        frappe.msgprint("No available rooms found in selected dates.")
+        room=frappe.get_all("room", filters={"habilitado": 1}, fields=["name"])
+        return room
     return available_rooms
