@@ -12,7 +12,7 @@ frappe.ui.form.on('reservation', {
                 method: "hermes.hermes.doctype.reservation.reservation.get_availability",
                 args: {
                     from_date: frm.doc.fecha_entrada,
-                    to_date: frm.doc.fecha_salida
+                    // to_date: frm.doc.fecha_salida
                 },
                 callback: function (r) {
                     if (r.message) {                        

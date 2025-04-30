@@ -1,9 +1,11 @@
 # Copyright (c) 2025, aet and contributors
 # For license information, please see license.txt
 
+
 import frappe
 from datetime import datetime, timedelta
 from frappe.utils import add_days
+from frappe.utils import getdate
 from frappe.model.document import Document
 
 class reservation(Document):
@@ -73,43 +75,36 @@ def delete_reservation_daily(reserva_dia_id, habitacion):
         for res in reservations:
             frappe.delete_doc("reservation_detail_daily", res.name, force=True)
         return f"Deleted {len(reservations)} records for habitacion: {habitacion}"
-    
     return "No records found"
 
 
 
 
 @frappe.whitelist()
-def get_availability(from_date, to_date):
+def get_availability(from_date):
     try:
-        from_date = datetime.strptime(from_date, "%Y-%m-%d").date()
-        to_date = datetime.strptime(to_date, "%Y-%m-%d").date()
-    except ValueError:
-        frappe.throw("Invalid date format. Please use YYYY-MM-DD.")
-    date_range = get_date_range(from_date, to_date)
+        date = getdate(from_date)
+    except Exception:
+        frappe.throw(_("Invalid date format. Please use YYYY-MM-DD."))
+
     availability = []
     rooms = frappe.get_all("room", filters={"habilitado": 1}, fields=["name"])
+
+    formatted_date = date.strftime("%Y-%m-%d")
+
     for room in rooms:
         room_status = {"room": room.name, "dates": {}}
-        for date in date_range:
-            formatted_date = date.strftime("%Y-%m-%d") 
-            booking_exists = frappe.db.exists("reservation_detail_daily",{"reserva_fecha": formatted_date, "habitacion": room.name})
-            if booking_exists :
-                room_status["dates"][formatted_date] = "Reserved"
-            else:
-                room_status["dates"][formatted_date]="Available"
-
+        booking_exists = frappe.db.exists(
+            "reservation_detail_daily",
+            {"reserva_fecha": formatted_date, "habitacion": room.name}
+        )
+        room_status["dates"][formatted_date] = "Reserved" if booking_exists else "Available"
         availability.append(room_status)
+
     return {
         "rooms": availability,
-        "dates": [str(d) for d in date_range]
+        "dates": [formatted_date]
     }
-
-
-def get_date_range(start_date, end_date):
-    return [(start_date + timedelta(days=i)) for i in range((end_date - start_date).days + 1)]
-
-
 
 
 @frappe.whitelist()
@@ -140,3 +135,33 @@ def set_query_for_habitacion(from_date, to_date, tantativo_pagado=None):
         room=frappe.get_all("room", filters={"habilitado": 1}, fields=["name"])
         return room
     return available_rooms
+
+
+
+# @frappe.whitelist()
+# def get_availability(from_date, to_date):
+#     try:
+#         from_date = datetime.strptime(from_date, "%Y-%m-%d").date()
+#         to_date = datetime.strptime(to_date, "%Y-%m-%d").date()
+#     except ValueError:
+#         frappe.throw("Invalid date format. Please use YYYY-MM-DD.")
+#     date_range = get_date_range(from_date, to_date)
+#     availability = []
+#     rooms = frappe.get_all("room", filters={"habilitado": 1}, fields=["name"])
+#     for room in rooms:
+#         room_status = {"room": room.name, "dates": {}}
+#         for date in date_range:
+#             formatted_date = date.strftime("%Y-%m-%d") 
+#             booking_exists = frappe.db.exists("reservation_detail_daily",{"reserva_fecha": formatted_date, "habitacion": room.name})
+#             if booking_exists :
+#                 room_status["dates"][formatted_date] = "Reserved"
+#             else:
+#                 room_status["dates"][formatted_date]="Available"
+
+#         availability.append(room_status)
+#     return {
+#         "rooms": availability,
+#         "dates": [str(d) for d in date_range]
+#     }
+# def get_date_range(start_date, end_date):
+#     return [(start_date + timedelta(days=i)) for i in range((end_date - start_date).days + 1)]
