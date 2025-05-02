@@ -216,22 +216,25 @@ function open_room_date_range_dialog(rooms, dateRange) {
         col = 1;
     }
     frappe.dom.set_style(`
-        .modal-sm {
-            max-width: 780px !important;
-        }
-        .modal-lg {
-            max-width: 1150px !important;
-        }
-        .modal-xl {
-            max-width: 1700px !important;
-        }
+        .modal-sm { max-width: 780px !important; }
+        .modal-lg { max-width: 1150px !important; }
+        .modal-xl { max-width: 1700px !important; }
+    
         .available-cell {
-            background-color:rgb(140, 233, 162) !important;
-            color:rgb(0, 150, 35) !important;
+            color: rgb(140, 233, 162) !important;
+            background-color: rgb(0, 150, 35) !important;
         }
-        .reserved-cell {
-            background-color:rgb(255, 137, 147) !important;
-            color:rgb(156, 0, 16) !important;
+        .tentative-cell {
+            color: rgb(255, 235, 132) !important;
+            background-color: rgb(133, 108, 0) !important;
+        }
+        .confirmed-payment-cell {
+            background-color: rgb(156, 0, 16) !important;
+            color: rgb(255, 137, 147) !important;
+        }
+        .confirmed-cell {
+            background-color: rgb(0, 140, 175) !important;
+            color: rgb(152, 222, 255) !important;
         }
     `);
     
@@ -320,10 +323,16 @@ function open_room_date_range_dialog(rooms, dateRange) {
             const fieldname = 'date_' + index;
             const $cell = row.row.find(`[data-fieldname="${fieldname}"]`);
             const value = doc[fieldname];
-            if (value === "Reserved") {
-                $cell.addClass('reserved-cell');
-            } else if (value === "Available") {
+            if (value === "TENTATIVO") {
+                $cell.addClass('tentative-cell');
+            } else if (value === "RESERVA SIN PAGO") {
+                $cell.addClass('confirmed-cell');
+            }
+            else if (value === "Free") {
                 $cell.addClass('available-cell');
+            }
+            else if (value === "RESERVA PAGADA") {
+                $cell.addClass('confirmed-payment-cell');
             }
         });
     });

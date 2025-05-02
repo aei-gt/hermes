@@ -94,11 +94,19 @@ def get_availability(from_date):
 
     for room in rooms:
         room_status = {"room": room.name, "dates": {}}
-        booking_exists = frappe.db.exists(
+
+        booking = frappe.db.get_value(
             "reservation_detail_daily",
-            {"reserva_fecha": formatted_date, "habitacion": room.name}
+            {"reserva_fecha": formatted_date, "habitacion": room.name},
+            "reservation_status",
+            as_dict=True
         )
-        room_status["dates"][formatted_date] = "Reserved" if booking_exists else "Available"
+
+        if booking:
+            room_status["dates"][formatted_date] = booking.reservation_status
+        else:
+            room_status["dates"][formatted_date] = "Free"
+
         availability.append(room_status)
 
     return {
