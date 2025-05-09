@@ -12,7 +12,7 @@ frappe.ui.form.on('reservation', {
                 method: "hermes.hermes.doctype.reservation.reservation.get_availability",
                 args: {
                     from_date: frm.doc.fecha_entrada,
-                    // to_date: frm.doc.fecha_salida
+                    to_date: frm.doc.fecha_salida
                 },
                 callback: function (r) {
                     if (r.message) {                        
@@ -212,13 +212,13 @@ function open_room_date_range_dialog(rooms, dateRange) {
     col = 3;
     if (dateRange.length > 2 && dateRange.length <= 4) {
         col = 2;
-    } else if (dateRange.length > 4) {
+    } else if (dateRange.length > 5) {
         col = 1;
     }
     frappe.dom.set_style(`
         .modal-sm { max-width: 780px !important; }
         .modal-lg { max-width: 1150px !important; }
-        .modal-xl { max-width: 1700px !important; }
+        .modal-xl { max-width: 1800px !important; }
     
         .available-cell {
             color: rgb(140, 233, 162) !important;
